@@ -1,5 +1,6 @@
 module Hadolint.Rule.DL3026 (rule) where
 
+import qualified Data.Maybe as Maybe
 import qualified Data.Set as Set
 import Data.String ( IsString(..) )
 import Data.Text (Text, pack, unpack, drop, dropEnd, isSuffixOf, isPrefixOf)
@@ -23,7 +24,19 @@ rule allowed = customRule check (emptyState Set.empty)
        in if doCheck (state st) img
             then st
             else st |> addFail CheckFailure {..}
+    check line st (Run (RunArgs _ (RunFlags m _ _))) =
+       if null $ Set.filter (not . checkMount st) m
+         then st
+         else st |> addFail CheckFailure {..}
     check _ st _ = st
+
+    checkMount st (CacheMount (CacheOpts _ _ _ _ fi _ _ _ _)) =
+      let img = fromString $ unpack $ Maybe.fromMaybe "scratch" fi
+       in doCheck (state st) img
+    checkMount st (BindMount (BindOpts _ _ fi _ _)) =
+      let img = fromString $ unpack $ Maybe.fromMaybe "scratch" fi
+       in doCheck (state st) img
+    checkMount _ _ = True
 
     doCheck st img = Set.member (toImageAlias img) st || Set.null allowed || isAllowed img
 

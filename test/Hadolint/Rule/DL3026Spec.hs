@@ -101,6 +101,34 @@ spec = do
       let ?config = def { allowedRegistries = [ "trusted.com" ] }
        in ruleCatchesNot "DL3026" dockerfile
 
+    it "warn on run with bind mount from untrusted registry" $ do
+      let dockerfile =
+            Text.unlines
+              [ "RUN --mount=type=bind,from=untrusted.com/repo/image:tag,target=/foo foobar" ]
+      let ?config = def { allowedRegistries = [ "trusted.com" ] }
+       in ruleCatches "DL3026" dockerfile
+
+    it "warn on run with cache mount from untrusted registry" $ do
+      let dockerfile =
+            Text.unlines
+              [ "RUN --mount=type=cache,from=untrusted.com/repo/image:tag,target=/foo foobar" ]
+      let ?config = def { allowedRegistries = [ "trusted.com" ] }
+       in ruleCatches "DL3026" dockerfile
+
+    it "don't warn on run with bind mount from trusted registry" $ do
+      let dockerfile =
+            Text.unlines
+              [ "RUN --mount=type=bind,from=trusted.com/repo/image:tag,target=/foo foobar" ]
+      let ?config = def { allowedRegistries = [ "trusted.com" ] }
+       in ruleCatchesNot "DL3026" dockerfile
+
+    it "don't warn on run with cache mount from trusted registry" $ do
+      let dockerfile =
+            Text.unlines
+              [ "RUN --mount=type=cache,from=trusted.com/repo/image:tag,target=/foo foobar" ]
+      let ?config = def { allowedRegistries = [ "trusted.com" ] }
+       in ruleCatchesNot "DL3026" dockerfile
+
     it "distrust all forms of docker.io if trusted registries are given" $ do
       let dockerFile =
             [ "FROM ubuntu:18.04 AS builder1",

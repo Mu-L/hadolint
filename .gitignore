@@ -29,3 +29,5 @@ devenv.local.nix
 .vim
 
 *.wasm
+
+hspec-discover.tix
