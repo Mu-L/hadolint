@@ -46,11 +46,12 @@ jobs:
             zlib1g-dev
 
       - name: Install ghc-wasm-meta release channel
+        id: ghc-wasm
         run: |
-          set -x
-
           git clone https://gitlab.haskell.org/haskell-wasm/ghc-wasm-meta.git
           export GHC_VERSION="$(grep -rE '^[[:space:]]{4}wasm32-wasi-${{ matrix.ghc }}.*:' ghc-wasm-meta/ghcup-wasm-0.0.9.yaml | tr -d ' :')"
+          echo "ghc_version=${GHC_VERSION}" >> "$GITHUB_OUTPUT"
+
           SKIP_GHC=1 ghc-wasm-meta/setup.sh
           source ~/.ghc-wasm/env
 
@@ -68,7 +69,7 @@ jobs:
         working-directory: hadolint
         run: |
           cabal --version
-          export GHCPATH="/usr/local/.ghcup/ghc/{{ matrix.ghc }}/bin"
+          export GHCPATH="/usr/local/.ghcup/ghc/{{ steps.ghc-wasm.outputs.ghc_version }}/bin"
           source ~/.ghc-wasm/env
           export PATH="$GHCPATH:$PATH"
 
