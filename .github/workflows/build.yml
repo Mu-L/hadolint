@@ -50,13 +50,13 @@ jobs:
           set -x
 
           git clone https://gitlab.haskell.org/haskell-wasm/ghc-wasm-meta.git
-          export GHC_VERSION="$(grep -rE '^[[:space:]]{4}wasm32-wasi-{{ matrix.ghc }}.*:' ghc-wasm-meta/ghcup-wasm-0.0.9.yaml | tr -d ' :')"
+          export GHC_VERSION="$(grep -rE '^[[:space:]]{4}wasm32-wasi-${{ matrix.ghc }}.*:' ghc-wasm-meta/ghcup-wasm-0.0.9.yaml | tr -d ' :')"
           SKIP_GHC=1 ghc-wasm-meta/setup.sh
           source ~/.ghc-wasm/env
 
           ghcup config add-release-channel \
             https://gitlab.haskell.org/haskell-wasm/ghc-wasm-meta/-/raw/master/ghcup-wasm-0.0.9.yaml
-          ghcup install cabal --set {{ matrix.cabal }}
+          ghcup install cabal --set ${{ matrix.cabal }}
           ghcup install ghc --set "${GHC_VERSION}" -- $CONFIGURE_ARGS
 
       - name: Checkout
