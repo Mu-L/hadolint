@@ -68,8 +68,7 @@ jobs:
       - name: Compile Hadolint embedded WASM version and JSFFI module
         working-directory: hadolint
         run: |
-          cabal --version
-          export GHCPATH="/usr/local/.ghcup/ghc/{{ steps.ghc-wasm.outputs.ghc_version }}/bin"
+          export GHCPATH="/usr/local/.ghcup/ghc/${{ steps.ghc-wasm.outputs.ghc_version }}/bin"
           source ~/.ghc-wasm/env
           export PATH="$GHCPATH:$PATH"
 
