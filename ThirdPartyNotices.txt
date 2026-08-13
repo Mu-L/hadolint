@@ -7,7 +7,7 @@ Bold-faced **`package-name`**s denote standard libraries bundled with `ghc-9.10.
 | Name | Version | [SPDX](https://spdx.org/licenses/) License Id | Description | Also depended upon by |
 | --- | --- | --- | --- | --- |
 | `Cabal` | [`3.12.1.0`](http://hackage.haskell.org/package/Cabal-3.12.1.0) | [`BSD-3-Clause`](http://hackage.haskell.org/package/Cabal-3.12.1.0/src/LICENSE) | A framework for packaging Haskell software |  |
-| `HsYAML` | [`0.2.1.5`](http://hackage.haskell.org/package/HsYAML-0.2.1.5) | [`GPL-2.0-only`](http://hackage.haskell.org/package/HsYAML-0.2.1.5/src/LICENSE.GPLv2) | Pure Haskell YAML 1.2 processor |  |
+| `HsYAML` | [`0.2.1.6`](http://hackage.haskell.org/package/HsYAML-0.2.1.6) | [`GPL-2.0-or-later`](http://hackage.haskell.org/package/HsYAML-0.2.1.6/src/LICENSE.GPLv2) | Pure Haskell YAML 1.2 processor |  |
 | `ShellCheck` | [`0.11.0`](http://hackage.haskell.org/package/ShellCheck-0.11.0) | [`GPL-3.0-only`](http://hackage.haskell.org/package/ShellCheck-0.11.0/src/LICENSE) | Shell script analysis tool |  |
 | `aeson` | [`2.2.5.0`](http://hackage.haskell.org/package/aeson-2.2.5.0) | [`BSD-3-Clause`](http://hackage.haskell.org/package/aeson-2.2.5.0/src/LICENSE) | Fast JSON parsing and encoding | `ShellCheck` |
 | **`base`** | [`4.20.1.0`](http://hackage.haskell.org/package/base-4.20.1.0) | [`BSD-3-Clause`](http://hackage.haskell.org/package/base-4.20.1.0/src/LICENSE) | Core data structures and operations | *(core library)* |
