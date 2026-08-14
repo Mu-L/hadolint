@@ -9,9 +9,9 @@ module Hadolint.Pragma
 
 import Data.Functor.Identity (Identity)
 import Data.Text (Text)
-import Data.Void (Void)
 import Hadolint.Rule (RuleCode (RuleCode))
 import Language.Docker.Syntax
+import Language.Docker.Parser (DockerfileError)
 import qualified Control.Foldl as Foldl
 import qualified Data.IntMap.Strict as Map
 import qualified Data.Set as Set
@@ -59,31 +59,31 @@ parseStageIgnorePragma = Megaparsec.parseMaybe stageIgnoreParser
 parseGlobalIgnorePragma :: Text -> Maybe [Text]
 parseGlobalIgnorePragma = Megaparsec.parseMaybe globalIgnoreParser
 
-ignoreParser :: Megaparsec.Parsec Void Text [Text]
+ignoreParser :: Megaparsec.Parsec DockerfileError Text [Text]
 ignoreParser = hadolintPragma >> ignore
 
-stageIgnoreParser :: Megaparsec.Parsec Void Text [Text]
+stageIgnoreParser :: Megaparsec.Parsec DockerfileError Text [Text]
 stageIgnoreParser = hadolintPragma >> stage >> ignore
 
-globalIgnoreParser :: Megaparsec.Parsec Void Text [Text]
+globalIgnoreParser :: Megaparsec.Parsec DockerfileError Text [Text]
 globalIgnoreParser = hadolintPragma >> global >> ignore
 
-hadolintPragma :: Megaparsec.Parsec Void Text Text
+hadolintPragma :: Megaparsec.Parsec DockerfileError Text Text
 hadolintPragma = spaces >> string "hadolint" >> spaces1
 
-stage :: Megaparsec.Parsec Void Text Text
+stage :: Megaparsec.Parsec DockerfileError Text Text
 stage = string "stage" >> spaces1
 
-global :: Megaparsec.Parsec Void Text Text
+global :: Megaparsec.Parsec DockerfileError Text Text
 global = string "global" >> spaces1
 
-ignore :: Megaparsec.Parsec Void Text [Text]
+ignore :: Megaparsec.Parsec DockerfileError Text [Text]
 ignore = string "ignore" >> spaces >> string "=" >> spaces >> ruleList
 
-ruleList :: Megaparsec.Parsec Void Text [Text]
+ruleList :: Megaparsec.Parsec DockerfileError Text [Text]
 ruleList = Megaparsec.sepBy1 ruleName ( spaces >> string "," >> spaces )
 
-ruleName :: Megaparsec.ParsecT Void Text Identity (Megaparsec.Tokens Text)
+ruleName :: Megaparsec.ParsecT DockerfileError Text Identity (Megaparsec.Tokens Text)
 ruleName =
   Megaparsec.takeWhile1P Nothing (\c -> c `elem` Set.fromList "DLSC0123456789")
   <* inlineComment
@@ -91,26 +91,26 @@ ruleName =
 parseShell :: Text -> Maybe Text
 parseShell = Megaparsec.parseMaybe shellParser
 
-shellParser :: Megaparsec.Parsec Void Text Text
+shellParser :: Megaparsec.Parsec DockerfileError Text Text
 shellParser = hadolintPragma >> string "shell" >> spaces >> string "=" >> spaces >> shellName
 
-shellName :: Megaparsec.ParsecT Void Text Identity (Megaparsec.Tokens Text)
+shellName :: Megaparsec.ParsecT DockerfileError Text Identity (Megaparsec.Tokens Text)
 shellName =
   Megaparsec.takeWhile1P Nothing (\c -> c `notElem` Set.fromList "\n\t ")
   <* inlineComment
 
-inlineComment :: Megaparsec.Parsec Void Text (Maybe Text)
+inlineComment :: Megaparsec.Parsec DockerfileError Text (Maybe Text)
 inlineComment =
   spaces >> Megaparsec.optional ( string "#" >> Megaparsec.takeWhileP Nothing (/= '\n') )
 
 string :: Megaparsec.Tokens Text
-  -> Megaparsec.ParsecT Void Text Identity (Megaparsec.Tokens Text)
+  -> Megaparsec.ParsecT DockerfileError Text Identity (Megaparsec.Tokens Text)
 string = Megaparsec.string
 
-spaces :: Megaparsec.ParsecT Void Text Identity (Megaparsec.Tokens Text)
+spaces :: Megaparsec.ParsecT DockerfileError Text Identity (Megaparsec.Tokens Text)
 spaces = Megaparsec.takeWhileP Nothing space
 
-spaces1 :: Megaparsec.ParsecT Void Text Identity (Megaparsec.Tokens Text)
+spaces1 :: Megaparsec.ParsecT DockerfileError Text Identity (Megaparsec.Tokens Text)
 spaces1 = Megaparsec.takeWhile1P Nothing space
 
 space :: Char -> Bool
